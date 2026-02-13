@@ -18,8 +18,8 @@ class KlingService:
     BASE_URL = "https://api.klingai.com/v1"
 
     MODELS = {
-        "kling-v3-0": "Kling v3.0 (오디오 포함)",
         "kling-v2-6": "Kling v2.6",
+        "kling-video-o1": "Kling Video O1",
     }
 
     ALLOWED_DURATIONS = [5, 10]

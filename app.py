@@ -301,7 +301,7 @@ with st.expander("🔧 고급 설정"):
     # 선택된 엔진에 따라 모델 목록 동적 변경
     if selected_engine == "kling":
         model_options = list(KlingService.MODELS.keys())
-        default_kling_model = "kling-v3-0"
+        default_kling_model = "kling-v2-6"
         default_index = model_options.index(default_kling_model) if default_kling_model in model_options else 0
         selected_model = st.selectbox(
             "AI 모델",
