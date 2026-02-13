@@ -18,6 +18,7 @@ class KlingService:
     BASE_URL = "https://api.klingai.com/v1"
 
     MODELS = {
+        "kling-v3-0": "Kling v3.0 (오디오 포함)",
         "kling-v2-6": "Kling v2.6",
     }
 
@@ -54,18 +55,34 @@ class KlingService:
         duration: int = 5,
         aspect_ratio: str = "16:9",
         resolution: str = "720p",
+        mode_type: str = "speech",
     ) -> tuple[bool, str, Optional[bytes]]:
         """Generate image-to-video with Kling AI."""
         try:
             if progress_callback:
                 progress_callback(0.05, "Kling AI 연결 중...")
 
-            # Align prompt strategy with Gemini flow.
-            prompt_enhanced = (
-                "사진 속 강아지가 프롬프트에 맞춰 자연스럽게 움직이는 영상을 생성해주세요. "
-                "강아지의 외형과 배경은 유지하고, 행동만 자연스럽게 변화시켜주세요.\n\n"
-                f"프롬프트: {prompt}"
-            )
+            user_prompt = prompt.strip()
+            if not user_prompt:
+                return False, "프롬프트가 비어 있습니다.", None
+
+            # Keep user prompt as highest priority for better adherence.
+            if mode_type == "dance":
+                prompt_enhanced = (
+                    "Follow USER_PROMPT as the highest-priority instruction.\n"
+                    "Preserve the dog's identity and the original background.\n"
+                    "Make the dog move naturally and energetically according to USER_PROMPT.\n"
+                    "No subtitles, no extra text overlays.\n\n"
+                    f"USER_PROMPT:\n{user_prompt}"
+                )
+            else:
+                prompt_enhanced = (
+                    "Follow USER_PROMPT exactly as the highest-priority instruction.\n"
+                    "Preserve the dog's identity and the original background.\n"
+                    "Focus on accurate mouth movement and facial expression matching USER_PROMPT.\n"
+                    "No subtitles, no extra text overlays.\n\n"
+                    f"USER_PROMPT:\n{user_prompt}"
+                )
 
             if progress_callback:
                 progress_callback(0.10, "영상 생성 요청 중...")

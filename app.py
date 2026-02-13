@@ -301,7 +301,14 @@ with st.expander("🔧 고급 설정"):
     # 선택된 엔진에 따라 모델 목록 동적 변경
     if selected_engine == "kling":
         model_options = list(KlingService.MODELS.keys())
-        selected_model = st.selectbox("AI 모델", model_options, format_func=lambda x: KlingService.MODELS[x])
+        default_kling_model = "kling-v3-0"
+        default_index = model_options.index(default_kling_model) if default_kling_model in model_options else 0
+        selected_model = st.selectbox(
+            "AI 모델",
+            model_options,
+            index=default_index,
+            format_func=lambda x: KlingService.MODELS[x]
+        )
     else:
         model_options = list(GeminiService.MODELS.keys())
         selected_model = st.selectbox("AI 모델", model_options, format_func=lambda x: GeminiService.MODELS[x])
@@ -353,14 +360,18 @@ if st.button("🎬 AI 영상 생성하기", type="primary", use_container_width=
             service = st.session_state.gemini_service
 
         # 영상 생성 호출
-        success, result_msg, video_data = service.generate_video(
-            image_bytes=st.session_state.image_bytes,
-            prompt=prompt,
-            progress_callback=update_progress,
-            model=selected_model,
-            duration=video_duration,
-            aspect_ratio=aspect_ratio
-        )
+        generate_kwargs = {
+            "image_bytes": st.session_state.image_bytes,
+            "prompt": prompt,
+            "progress_callback": update_progress,
+            "model": selected_model,
+            "duration": video_duration,
+            "aspect_ratio": aspect_ratio,
+        }
+        if selected_engine == "kling":
+            generate_kwargs["mode_type"] = st.session_state.selected_mode
+
+        success, result_msg, video_data = service.generate_video(**generate_kwargs)
 
         # 진행바/상태 텍스트 정리
         progress_bar.empty()
