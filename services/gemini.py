@@ -130,7 +130,7 @@ class GeminiService:
                 model=model,
                 prompt=prompt_enhanced,
                 image=types.Image(
-                    image_bytes=image_bytes,
+                    data=image_bytes,
                     mime_type=self._guess_mime_type(image_bytes),
                 ),
                 config=types.GenerateVideosConfig(**config_kwargs),
