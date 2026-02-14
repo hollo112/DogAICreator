@@ -26,6 +26,7 @@ class GeminiService:
     """Video generation service backed by Gemini/Veo."""
 
     MODELS = {
+        "veo-3.1-generate-preview": "Veo 3.1 Standard",
         "veo-3.1-fast-generate-preview": "Veo 3.1 Fast",
     }
 
