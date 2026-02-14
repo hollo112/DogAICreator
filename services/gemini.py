@@ -82,6 +82,7 @@ class GeminiService:
         duration: int = 4,
         aspect_ratio: str = "16:9",
         resolution: str = "720p",
+        mode_type: str = "speech",
     ) -> tuple[bool, str, Optional[bytes]]:
         """Generate an image-to-video clip with Veo.
 
@@ -92,11 +93,26 @@ class GeminiService:
             if progress_callback:
                 progress_callback(0.1, "Veo API 연결 중...")
 
-            prompt_enhanced = (
-                "사진 속 강아지가 프롬프트에 맞춰 자연스럽게 움직이는 영상을 생성해주세요. "
-                "강아지의 외형과 배경은 유지하고, 행동만 자연스럽게 변화시켜주세요.\n\n"
-                f"프롬프트: {prompt}"
-            )
+            user_prompt = prompt.strip()
+
+            if mode_type == "dance":
+                prompt_enhanced = (
+                    "The dog in the photo stands up on two legs and dances energetically.\n"
+                    "Preserve the dog's exact appearance and the original background.\n"
+                    "The dog moves naturally and rhythmically to the music.\n"
+                    "No subtitles, no text overlays.\n\n"
+                    f"Dance style: {user_prompt}"
+                )
+            else:
+                prompt_enhanced = (
+                    "The dog in the photo opens its mouth and speaks the following dialogue "
+                    "with accurate lip-sync mouth movements.\n"
+                    "Voice: a cute 3-year-old Korean girl, cheerful and adorable tone.\n"
+                    "The dog's mouth moves naturally matching each syllable of the dialogue.\n"
+                    "Preserve the dog's exact appearance and the original background.\n"
+                    "No subtitles, no text overlays.\n\n"
+                    f"Dialogue: {user_prompt}"
+                )
 
             if progress_callback:
                 progress_callback(0.3, "비디오 생성 요청 중...")

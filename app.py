@@ -368,8 +368,7 @@ if st.button("🎬 AI 영상 생성하기", type="primary", use_container_width=
             "duration": video_duration,
             "aspect_ratio": aspect_ratio,
         }
-        if selected_engine == "kling":
-            generate_kwargs["mode_type"] = st.session_state.selected_mode
+        generate_kwargs["mode_type"] = st.session_state.selected_mode
 
         success, result_msg, video_data = service.generate_video(**generate_kwargs)
 

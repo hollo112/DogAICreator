@@ -77,11 +77,13 @@ class KlingService:
                 )
             else:
                 prompt_enhanced = (
-                    "Follow USER_PROMPT exactly as the highest-priority instruction.\n"
+                    "The dog in the photo opens its mouth and speaks the following dialogue "
+                    "with accurate lip-sync mouth movements.\n"
+                    "Voice: a cute 3-year-old Korean girl, cheerful and adorable tone.\n"
+                    "The dog's mouth moves naturally matching each syllable of the dialogue.\n"
                     "Preserve the dog's identity and the original background.\n"
-                    "Focus on accurate mouth movement and facial expression matching USER_PROMPT.\n"
                     "No subtitles, no extra text overlays.\n\n"
-                    f"USER_PROMPT:\n{user_prompt}"
+                    f"Dialogue:\n{user_prompt}"
                 )
 
             if progress_callback:
