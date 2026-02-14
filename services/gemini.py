@@ -113,10 +113,8 @@ class GeminiService:
             if progress_callback:
                 progress_callback(0.3, "비디오 생성 요청 중...")
 
-            # GenerateVideosConfig는 camelCase 파라미터 사용
             config_kwargs = {
                 "aspectRatio": aspect_ratio,
-                "generateAudio": True,
             }
             if duration and duration in (4, 6, 8):
                 config_kwargs["durationSeconds"] = duration
