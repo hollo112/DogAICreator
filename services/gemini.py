@@ -117,6 +117,15 @@ class GeminiService:
             if progress_callback:
                 progress_callback(0.3, "비디오 생성 요청 중...")
 
+            config_kwargs = {
+                "aspect_ratio": aspect_ratio,
+            }
+            # resolution과 duration은 모델에 따라 지원 여부가 다를 수 있음
+            if resolution:
+                config_kwargs["resolution"] = resolution
+            if duration and duration in (4, 6, 8):
+                config_kwargs["duration_seconds"] = duration
+
             operation = self.client.models.generate_videos(
                 model=model,
                 prompt=prompt_enhanced,
@@ -124,11 +133,7 @@ class GeminiService:
                     image_bytes=image_bytes,
                     mime_type=self._guess_mime_type(image_bytes),
                 ),
-                config=types.GenerateVideosConfig(
-                    aspect_ratio=aspect_ratio,
-                    resolution=resolution,
-                    duration_seconds=4,
-                ),
+                config=types.GenerateVideosConfig(**config_kwargs),
             )
 
             if progress_callback:
@@ -155,7 +160,14 @@ class GeminiService:
             return True, "비디오 생성 완료", video_bytes
 
         except Exception as e:
-            return False, f"비디오 생성 중 오류: {str(e)}", None
+            error_msg = str(e)
+            # API 에러 상세 정보 추출
+            if hasattr(e, 'response'):
+                try:
+                    error_msg = f"{error_msg} | 상세: {e.response.text}"
+                except Exception:
+                    pass
+            return False, f"비디오 생성 중 오류: {error_msg}", None
 
 
 def get_gemini_service() -> GeminiService:

@@ -316,8 +316,7 @@ with st.expander("🔧 고급 설정"):
     if selected_engine == "kling":
         video_duration = st.select_slider("영상 길이 (초)", options=KlingService.ALLOWED_DURATIONS, value=5)
     else:
-        video_duration = 4
-        st.caption("Gemini는 4초 길이로 고정됩니다.")
+        video_duration = st.select_slider("영상 길이 (초)", options=[4, 6, 8], value=4)
     aspect_ratio = st.selectbox("화면 비율", ["16:9", "9:16"])
 
 # ─── STEP 5: 생성 버튼 ───
