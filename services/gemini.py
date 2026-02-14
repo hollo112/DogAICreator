@@ -1,4 +1,4 @@
-﻿"""
+"""
 Gemini API integration module.
 """
 
@@ -84,11 +84,7 @@ class GeminiService:
         resolution: str = "720p",
         mode_type: str = "speech",
     ) -> tuple[bool, str, Optional[bytes]]:
-        """Generate an image-to-video clip with Veo.
-
-        The `duration` parameter is accepted for interface compatibility but
-        Veo duration is fixed to 4 seconds in this app.
-        """
+        """Generate an image-to-video clip with Veo."""
         try:
             if progress_callback:
                 progress_callback(0.1, "Veo API 연결 중...")
@@ -117,21 +113,20 @@ class GeminiService:
             if progress_callback:
                 progress_callback(0.3, "비디오 생성 요청 중...")
 
+            # GenerateVideosConfig는 camelCase 파라미터 사용
             config_kwargs = {
-                "aspect_ratio": aspect_ratio,
+                "aspectRatio": aspect_ratio,
+                "generateAudio": True,
             }
-            # resolution과 duration은 모델에 따라 지원 여부가 다를 수 있음
-            if resolution:
-                config_kwargs["resolution"] = resolution
             if duration and duration in (4, 6, 8):
-                config_kwargs["duration_seconds"] = duration
+                config_kwargs["durationSeconds"] = duration
 
             operation = self.client.models.generate_videos(
                 model=model,
                 prompt=prompt_enhanced,
                 image=types.Image(
-                    data=image_bytes,
-                    mime_type=self._guess_mime_type(image_bytes),
+                    imageBytes=image_bytes,
+                    mimeType=self._guess_mime_type(image_bytes),
                 ),
                 config=types.GenerateVideosConfig(**config_kwargs),
             )
@@ -144,7 +139,8 @@ class GeminiService:
                 if time.time() - started_at > self.GENERATION_TIMEOUT:
                     return False, "비디오 생성 시간 초과", None
                 if progress_callback:
-                    progress_callback(0.6, "생성 중...")
+                    elapsed = int(time.time() - started_at)
+                    progress_callback(0.6, f"생성 중... ({elapsed}초 경과)")
                 time.sleep(10)
                 operation = self.client.operations.get(operation)
 
@@ -161,7 +157,6 @@ class GeminiService:
 
         except Exception as e:
             error_msg = str(e)
-            # API 에러 상세 정보 추출
             if hasattr(e, 'response'):
                 try:
                     error_msg = f"{error_msg} | 상세: {e.response.text}"
